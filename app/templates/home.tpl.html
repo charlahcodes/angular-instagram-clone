@@ -1,0 +1,16 @@
+<div>
+  <h3>Home</h3>
+
+  <div ng-controller="HomeController as vm">
+    <charlie-image 
+      ng-repeat="photo in photos" 
+      photo="photo"
+      >
+    </charlie-image>
+  </div>
+
+
+  <a href="#/add"><button>Add</button></a>
+
+
+</div>
