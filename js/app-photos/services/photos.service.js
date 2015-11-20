@@ -4,6 +4,7 @@ let PhotosService = function($http, PARSE) {
 
   this.getAllPhotos = getAllPhotos;
   this.submitForm = submitForm;
+  this.like = like;
 
   function Photo (photoObj) {
     this.title = photoObj.title;
@@ -21,6 +22,15 @@ let PhotosService = function($http, PARSE) {
   function submitForm (photoObj) {
     let p = new Photo(photoObj);
     return $http.post(url, p, PARSE.CONFIG);
+  }
+
+  function like(obj) {
+    updateLikes(obj);  
+  }
+
+  function updateLikes (obj) {
+    obj.likes = obj.likes + 1;
+    return $http.put(url + '/' + obj.objectId, obj, PARSE.CONFIG);
   }
 
 

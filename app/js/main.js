@@ -114,7 +114,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-var charlieImage = function charlieImage($state, PhotosService) {
+var charlieImage = function charlieImage($state, PhotosService, $timeout) {
 
   return {
     restrict: 'AE',
@@ -122,17 +122,18 @@ var charlieImage = function charlieImage($state, PhotosService) {
     scope: {
       photo: "="
     },
-    template: '\n      <div class="photoCard">\n        <img class="mainImage" ng-src="{{ photo.url }}">\n        <div class="clicked"><img src="/images/heart.gif"></div>\n      </div>\n    ',
+    template: '\n    <ul class="photoList">\n      <li class="photoListItem">\n          <img class="mainImage" ng-src="{{ photo.url }}">\n          <div class="clicked">\n            <img src="/images/heart.gif">\n            <div class="likes">{{ photo.likes }}</div>\n          </div>\n      </li>\n    </ul>\n    ',
     controller: 'HomeController as vm',
     link: function link(scope, element, attrs) {
       element.on('dblclick', function () {
-        angular.element(this).children(".clicked").toggleClass("display");
+        angular.element(this).children().children(".clicked").toggleClass("display");
+        PhotosService.like(scope.photo);
       });
     }
   };
 };
 
-charlieImage.$inject = ['$state', 'PhotosService'];
+charlieImage.$inject = ['$state', 'PhotosService', '$timeout'];
 
 exports['default'] = charlieImage;
 module.exports = exports['default'];
@@ -178,6 +179,7 @@ var PhotosService = function PhotosService($http, PARSE) {
 
   this.getAllPhotos = getAllPhotos;
   this.submitForm = submitForm;
+  this.like = like;
 
   function Photo(photoObj) {
     this.title = photoObj.title;
@@ -195,6 +197,15 @@ var PhotosService = function PhotosService($http, PARSE) {
   function submitForm(photoObj) {
     var p = new Photo(photoObj);
     return $http.post(url, p, PARSE.CONFIG);
+  }
+
+  function like(obj) {
+    updateLikes(obj);
+  }
+
+  function updateLikes(obj) {
+    obj.likes = obj.likes + 1;
+    return $http.put(url + '/' + obj.objectId, obj, PARSE.CONFIG);
   }
 };
 
